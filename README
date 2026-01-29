@@ -3,6 +3,7 @@ CSCI585 - Database Systems
 This repository contains notes or codes.
 
 week1:
-1. ./week1_intro.md
-2. ./week1_data_modeling.md
-
+   ./week1_intro.md
+   ./week1_data_modeling.md
+week2:
+   ./week2_er.md
