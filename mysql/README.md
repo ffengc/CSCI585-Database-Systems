@@ -1,7 +1,15 @@
-# Learn mysql one more time
+# Learn MySQL One More Time🚀
 
 Learn how to use mysql one more time!
 
+- [Learn MySQL One More Time🚀](#learn-mysql-one-more-time)
+  - [前言](#前言)
+  - [库操作](#库操作)
+    - [创建和删除数据库](#创建和删除数据库)
+    - [数据库编码问题](#数据库编码问题)
+    - [库的删改查](#库的删改查)
+    - [数据库的备份](#数据库的备份)
+    - [其他](#其他)
 
 版本：
 ![alt text](./assets/image.png)
@@ -55,5 +63,150 @@ mysql是个网络服务，`-h` 表示连接哪一台主机上的 mysql, `-P` 表
 存储引擎其实就是底层如何把数据存储起来的方法，这个也很好理解。`show engines;` 就可以查看MySQL配置有的一些存储引擎，最常用的就是 InnoDB, 其次就是 MySAM，然后还有一些其他的，也不用去管太多。
 
 
-## 操作
+## 库操作
+
+### 创建和删除数据库
+
+```sql
+CREATE DATABASE [IF NOT EXISTS] db_name [create_specification [,
+      create_specification] ...]
+      create_specification:
+      [DEFAULT] CHARACTER SET charset_name
+      [DEFAULT] COLLATE collation_name
+```
+
+[]是可选项。CHARACTER SET指定数据库采用的字符集。COLLATE指定数据库字符集的校验规则。
+
+
+![alt text](assets/image1.png)
+
+删除很简单:
+
+```sql
+drop database d1;
+```
+
+### 数据库编码问题
+
+
+关于数据库的编码问题：
+- 字符集
+- 校验集
+
+存的时候（写），一定是使用字符集，select的时候（查）的时候，一定是使用校验集。
+
+编码很重要，这个也不用多说了。
+
+数据库无论对数据做任何操作，都必须操作和编码必须是一致的。
+
+查看系统默认字符集以及校验规则
+
+```sql
+show variables like 'character_set_database';
+show variables like 'collation_database';
+```
+
+![alt text](assets/image2.png)
+
+基本上默认都是 utf8 的。
+
+然后我们可以看下数据库都可以支持什么集
+
+```sql
+show charset;
+show collation;
+```
+
+![alt text](assets/image3.png)
+
+创建一个使用utf字符集，并带校对规则的 db3数据库:
+```sql
+create database db3 charset=utf8 collate utf8_general_ci;
+```
+
+
+是否区分大小写，在查询，show的，select的时候，都会结果有不同的。这个也是很好理解的，不多说了。
+
+### 库的删改查
+
+删除很简单：
+
+```sql
+drop database ...;
+```
+当然也可以加上 if exists
+
+然后查数据库，就是 `show databases;`, use 之后去操作数据库里的内容。
+
+如何知道自己当前在哪个数据库里：
+```sql
+select database();
+```
+
+修改也很简单，关键字是 `alter database`
+
+比如:
+
+```sql
+alter database mytest charset=gbk
+```
+
+想看看当时创建数据库的时候，数据库是怎么样的：
+
+```sql
+show create database db3;
+```
+
+![alt text](assets/image4.png)
+
+`/*` 这些不是注释：表示当前mysql版本大于4.01版本，就执行这句话，有点像C++文件的一些宏判断。
+
+### 数据库的备份
+
+当然可以直接拷贝一个目录，当然极力不推荐。
+
+mysql之前是支持库的重命名的，但是现在不支持了，这个非常不好，毕竟可能对方也在用这个数据库。
+
+备份：
+```sh
+mysqldump -P3306 -u root -p 密码 -B 数据库名 > 数据库备份存储的文件路径
+```
+
+将mytest库备份到文件（退出连接）:
+```sh
+mysqldump -P3306 -u root -p123456 -B mytest > ~/mytest.sql
+```
+
+![alt text](assets/image5.png)
+
+> [!tip]
+> 备份本质是备份所有有效的操作，打开备份的`.sql`文件也可以看到，`source`的时候其实就是把操作全部执行一遍而已。
+
+还原：
+```sql
+source ~/db3.sql;
+```
+
+如果备份的不是整个数据库，而是其中的一张表，怎么做？
+```bash
+mysqldump -u root -p 数据库名 表名1 表名2 > D:/mytest.sql
+```
+同时备份多个数据库:
+```bash
+mysqldump -u root -p -B 数据库名1 数据库名2 ... > 数据库存放路径
+```
+
+
+### 其他
+
+查看连接情况。
+
+```sql
+show processlist;
+```
+
+可以告诉我们当前有哪些用户连接到我们的MySQL，如果查出某个用户不是正常登陆的，很有可能数据库被人入侵了。以后发现自己数据库比较慢时，可以用这个指令来查看数据库连接情况。
+
+
+## 表操作
 
