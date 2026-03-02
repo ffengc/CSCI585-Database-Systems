@@ -210,3 +210,12 @@ show processlist;
 
 ## 表操作
 
+### 创建表
+
+```sql
+CREATE TABLE table_name (
+    field1 datatype,
+    field2 datatype,
+    field3 datatype
+) character set 字符集 collate 校验规则 engine 存储引擎;
+```
